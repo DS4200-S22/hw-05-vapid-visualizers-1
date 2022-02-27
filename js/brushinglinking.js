@@ -32,8 +32,8 @@ const svg3 = d3.select("#vis-holder")
     .attr("height", height - margin.top - margin.bottom)
     .attr("viewBox", [0, 0, width, height]);
 
-//TODO: Initialize bars. We will need these to be global. 
-
+//Initialize bars. We will need these to be global.
+let bars;
 
 // Define color scale
 const color = d3.scaleOrdinal()
@@ -55,63 +55,71 @@ d3.csv("data/iris.csv").then((data) => {
     let yKey1 = "Petal_Length";
 
     // Find max x
-    let maxX1 = d3.max(data, (d) => { return d[xKey1]; });
+    let maxX1 = d3.max(data, (d) => {
+      return d[xKey1];
+    });
 
     // Create X scale
     let x1 = d3.scaleLinear()
-                .domain([0,maxX1])
-                .range([margin.left, width-margin.right]); 
-    
+        .domain([0, maxX1])
+        .range([margin.left, width - margin.right]);
+
     // Add x axis 
     svg1.append("g")
-        .attr("transform", `translate(0,${height - margin.bottom})`) 
-        .call(d3.axisBottom(x1))   
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x1))
         .attr("font-size", '20px')
         .call((g) => g.append("text")
-                      .attr("x", width - margin.right)
-                      .attr("y", margin.bottom - 4)
-                      .attr("fill", "black")
-                      .attr("text-anchor", "end")
-                      .text(xKey1)
-      );
+            .attr("x", width - margin.right)
+            .attr("y", margin.bottom - 4)
+            .attr("fill", "black")
+            .attr("text-anchor", "end")
+            .text(xKey1)
+        );
 
-    // Finx max y 
-    let maxY1 = d3.max(data, (d) => { return d[yKey1]; });
+
+    // Find max y
+    let maxY1 = d3.max(data, (d) => {
+      return d[yKey1];
+    });
 
     // Create Y scale
     let y1 = d3.scaleLinear()
-                .domain([0, maxY1])
-                .range([height - margin.bottom, margin.top]); 
+        .domain([0, maxY1])
+        .range([height - margin.bottom, margin.top]);
 
     // Add y axis 
     svg1.append("g")
-        .attr("transform", `translate(${margin.left}, 0)`) 
-        .call(d3.axisLeft(y1)) 
-        .attr("font-size", '20px') 
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(y1))
+        .attr("font-size", '20px')
         .call((g) => g.append("text")
-                      .attr("x", 0)
-                      .attr("y", margin.top)
-                      .attr("fill", "black")
-                      .attr("text-anchor", "end")
-                      .text(yKey1)
-      );
+            .attr("x", 0)
+            .attr("y", margin.top)
+            .attr("fill", "black")
+            .attr("text-anchor", "end")
+            .text(yKey1)
+        );
 
     // Add points
     const myCircles1 = svg1.selectAll("circle")
-                            .data(data)
-                            .enter()
-                              .append("circle")
-                              .attr("id", (d) => d.id)
-                              .attr("cx", (d) => x1(d[xKey1]))
-                              .attr("cy", (d) => y1(d[yKey1]))
-                              .attr("r", 8)
-                              .style("fill", (d) => color(d.Species))
-                              .style("opacity", 0.5);
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("id", (d) => d.id)
+        .attr("cx", (d) => x1(d[xKey1]))
+        .attr("cy", (d) => y1(d[yKey1]))
+        .attr("r", 8)
+        .style("fill", (d) => color(d.Species))
+        .style("opacity", 0.5);
 
-    //TODO: Define a brush (call it brush1)
+    //Define a brush (call it brush1)
+    const brush1 = d3.brush().extent([[0, 0], [width, height]]);
 
-    //TODO: Add brush1 to svg1
-    
+    // Add brush1 to svg1
+    svg1.call(brush1
+        .on("brush start", updateChart1));
+
   }
 
   //Scatterplot 2 (show Sepal width on x-axis and Petal width on y-axis)
@@ -173,35 +181,42 @@ d3.csv("data/iris.csv").then((data) => {
         .style("fill", (d) => color(d.Species))
         .style("opacity", 0.5);
 
+    //Define a brush (call it brush1)
+    const brush2 = d3.brush().extent([[0, 0], [width, height]]);
+
+    // Add brush2 to svg2
+    svg2.call(brush2
+        .on("brush start", updateChart2));
+
   }
 
-  //TODO: Barchart with counts of different species
+  //Barchart with counts of different species
 
     const data1 = [
-        {Species: 'setosa', count: 50},
-        {Species: 'versicolor', count: 50},
-        {Species: 'virginica', count: 50},
+        {Species: 'setosa', Count: 50},
+        {Species: 'versicolor', Count: 50},
+        {Species: 'virginica', Count: 50},
     ];
 
-    let maxY1 = d3.max(data1, function(d) { return d.count; });
+    let maxY3 = d3.max(data1, function(d) { return d.Count; });
 
-    let yScale1 = d3.scaleLinear()
-        .domain([0,maxY1])
+    let yScale3 = d3.scaleLinear()
+        .domain([0,maxY3])
         .range([height-margin.bottom,margin.top]);
 
-    let xScale1 = d3.scaleBand()
+    let xScale3 = d3.scaleBand()
         .domain(d3.range(data1.length))
         .range([margin.left, width - margin.right])
         .padding(0.1);
 
     svg3.append("g")
         .attr("transform", `translate(${margin.left}, 0)`)
-        .call(d3.axisLeft(yScale1))
+        .call(d3.axisLeft(yScale3))
         .attr("font-size", '20px');
 
     svg3.append("g")
         .attr("transform", `translate(0,${height - margin.bottom})`)
-        .call(d3.axisBottom(xScale1)
+        .call(d3.axisBottom(xScale3)
             .tickFormat(i => data1[i].Species))
         .attr("font-size", '20px');
 
@@ -210,18 +225,11 @@ d3.csv("data/iris.csv").then((data) => {
         .enter()
         .append("rect")
         .attr("class", "bar")
-        .attr("x", (d,i) => xScale1(i))
-        .attr("y", (d) => yScale1(d.count))
+        .attr("x", (d,i) => xScale3(i))
+        .attr("y", (d) => yScale3(d.Count))
         .style("fill", (d) => color(d.Species))
-        .attr("height", (d) => (height - margin.bottom) - yScale1(d.count))
-        .attr("width", xScale1.bandwidth());
-
-
-
-
-
-
-
+        .attr("height", (d) => (height - margin.bottom) - yScale3(d.Count))
+        .attr("width", xScale3.bandwidth());
 
 
     //Brushing Code---------------------------------------------------------------------------------------------
@@ -259,14 +267,14 @@ d3.csv("data/iris.csv").then((data) => {
 
   }
 
-    //Finds dots within the brushed region
-    function isBrushed(brush_coords, cx, cy) {
-      if (brush_coords === null) return;
+  //Finds dots within the brushed region
+  function isBrushed(brush_coords, cx, cy) {
+    if (brush_coords === null) return;
 
-      var x0 = brush_coords[0][0],
+    var x0 = brush_coords[0][0],
         x1 = brush_coords[1][0],
         y0 = brush_coords[0][1],
         y1 = brush_coords[1][1];
-      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
-    }
+    return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
+  }
 });
