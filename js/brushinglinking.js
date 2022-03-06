@@ -241,18 +241,18 @@ d3.csv("data/iris.csv").then((data) => {
       //TODO: add code to clear existing brush from svg2
   }
 
-  // Call when Scatterplot1 is brushed 
+  // Call when Scatterplot1 is brushed (Ashraf)
   function updateChart1(brushEvent) {
       
-      //TODO: Find coordinates of brushed region 
-  
+      //TODO: Find coordinates of brushed region
+
       //TODO: Give bold outline to all points within the brush region in Scatterplot1
 
       //TODO: Give bold outline to all points in Scatterplot2 corresponding to points within the brush region in Scatterplot1
 
   }
 
-  // Call when Scatterplot2 is brushed 
+  // Call when Scatterplot2 is brushed  (Ashraf)
   function updateChart2(brushEvent) {
     
     //TODO: Find coordinates of brushed region 
