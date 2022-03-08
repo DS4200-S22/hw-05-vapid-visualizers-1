@@ -1,4 +1,10 @@
 
 body {
-  font-family: Arial;
+  font-family: Arial, serif;
+}
+
+.selected {
+  opacity: 1 !important;
+  stroke: black;
+  stroke-width: 3px;
 }
