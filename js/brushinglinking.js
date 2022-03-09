@@ -47,9 +47,7 @@ d3.csv("data/iris.csv").then((data) => {
 
   // We will need keys to be global
   let xKey1, yKey1, xKey2, yKey2, xKey3, yKey3;
-
-  let circles1, circles2, bars3;
-
+  
   // Scatterplot1
   {
     xKey1 = "Sepal_Length";
