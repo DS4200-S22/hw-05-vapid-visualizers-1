@@ -114,12 +114,14 @@ d3.csv("data/iris.csv").then((data) => {
         .style("opacity", 0.5);
 
     //Define a brush (call it brush1)
-    const brush1 = d3.brush().extent([[0, 0], [width, height]]);
+    const brush1 = d3.brush()
+        .extent([[0, 0], [width, height]])
+        .on("start", clear)
+        .on("brush", updateChart1);
 
-    // clear old  brush when you start new one
+    // clear old brush when you start new one
     // Add brush1 to svg1
-    svg1.call(brush1
-        .on("brush", updateChart1));
+    svg1.call(brush1);
 
   }
 
@@ -182,17 +184,18 @@ d3.csv("data/iris.csv").then((data) => {
         .style("fill", (d) => color(d.Species))
         .style("opacity", 0.5);
 
-    //Define a brush (call it brush1)
-    const brush2 = d3.brush().extent([[0, 0], [width, height]]);
+    //Define a brush (call it brush2)
+    const brush2 = d3.brush()
+        .extent([[0, 0], [width, height]])
+        .on("start", clear)
+        .on("brush start", updateChart2);
 
     // Add brush2 to svg2
-    svg2.call(brush2
-        .on("brush start", updateChart2));
-
+    svg2.call(brush2);
   }
 
-  //Barchart with counts of different species
 
+  //Barchart with counts of different species
     const data1 = [
         {Species: 'setosa', Count: 50},
         {Species: 'versicolor', Count: 50},
@@ -238,32 +241,32 @@ d3.csv("data/iris.csv").then((data) => {
   // Call to removes existing brushes 
   function clear() {
       svg1.call(brush1.move, null);
-      //TODO: add code to clear existing brush from svg2
+      //add code to clear existing brush from svg2
       svg2.call(brush2.move, null);
   }
 
   // Call when Scatterplot1 is brushed (Ashraf)
   function updateChart1(brushEvent) {
-      //TODO: Find coordinates of brushed region
+      //Find coordinates of brushed region
       let coords = brushEvent.selection;
 
-      //TODO: Give bold outline to all points within the brush region in Scatterplot1
+      //Give bold outline to all points within the brush region in Scatterplot1
       myCircles1.classed("selected",(d) => { return isBrushed(coords, x1(d[xKey1]), y1(d[yKey1]))});
 
-      //TODO: Give bold outline to all points in Scatterplot2 corresponding to points within the brush region in Scatterplot1
+      //Give bold outline to all points in Scatterplot2 corresponding to points within the brush region in Scatterplot1
       myCircles2.classed("selected", (d) => {return isBrushed(coords, x1(d[xKey1]), y1(d[yKey1]))})
   }
 
   // Call when Scatterplot2 is brushed  (Ashraf)
   function updateChart2(brushEvent) {
     
-    //TODO: Find coordinates of brushed region
+    //Find coordinates of brushed region
     let coords = brushEvent.selection;
 
-    //TODO: Start an empty set that you can store names of selected species in
+    //Start an empty set that you can store names of selected species in
     let species = new Set();
 
-    //TODO: Give bold outline to all points within the brush region in Scatterplot2 & collect names of brushed species
+    //Give bold outline to all points within the brush region in Scatterplot2 & collect names of brushed species
     myCircles2.classed("selected",(d) => {
       let ret = isBrushed(coords, x2(d[xKey2]), y2(d[yKey2]));
       if (ret) {
@@ -272,10 +275,11 @@ d3.csv("data/iris.csv").then((data) => {
       console.log(species)
       return ret;
     })
-    //TODO: Give bold outline to all points in Scatterplot1 corresponding to points within the brush region in Scatterplot2
+
+    //Give bold outline to all points in Scatterplot1 corresponding to points within the brush region in Scatterplot2
     myCircles1.classed("selected",(d) => { return isBrushed(coords, x2(d[xKey2]), y2(d[yKey2]))});
 
-    //TODO: Give bold outline to all bars in bar chart with corresponding to species selected by Scatterplot2 brush
+    //Give bold outline to all bars in bar chart with corresponding to species selected by Scatterplot2 brush
     bars.classed("selected", (d) => { console.log(species)
       return species.has(d['Species'])});
   }
